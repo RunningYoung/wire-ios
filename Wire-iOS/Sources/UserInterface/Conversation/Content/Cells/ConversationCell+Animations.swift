@@ -22,7 +22,7 @@ import Foundation
 
 extension ConversationCell {
     
-    public func updateVisibleViews(views: [UIView], visibleViews: [UIView], animated: Bool) {
+    public func updateVisibleViews(_ views: [UIView], visibleViews: [UIView], animated: Bool) {
         if (animated) {
             UIView.transitionWithView(self, duration: 0.35, options: .TransitionCrossDissolve, animations: {
                 self.updateVisibleViews(views, visibleViews: visibleViews)
@@ -32,11 +32,11 @@ extension ConversationCell {
         }
     }
     
-    public func updateVisibleViews(views: [UIView], visibleViews: [UIView]) {
-        let allViews = Set(views)
+    public func updateVisibleViews(_ views: [UIView], visibleViews: [UIView]) {
+        var allViews = Set(views)
         let hiddenViews = allViews.subtract(visibleViews)
         
-        visibleViews.forEach { $0.hidden = false }
+        visibleViews.forEach { $0.isHidden = false }
         hiddenViews.forEach { $0.hidden = true }
     }
     

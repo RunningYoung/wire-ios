@@ -19,27 +19,27 @@
 import Foundation
 import Cartography
 
-public class LikeButton: IconButton {
-    public func setSelected(selected: Bool, animated: Bool) {
+open class LikeButton: IconButton {
+    open func setSelected(_ selected: Bool, animated: Bool) {
         if animated {
             guard let imageView = self.imageView else {
                 return
             }
             
             let prevState: UIControlState
-            if self.selected {
-                prevState = .Selected
+            if self.isSelected {
+                prevState = .selected
             }
             else {
-                prevState = .Normal
+                prevState = UIControlState()
             }
 
-            let fakeImageView = UIImageView(image: UIImage.init(forIcon: self.iconTypeForState(prevState), iconSize: .Large, color: self.iconColorForState(prevState)))
+            let fakeImageView = UIImageView(image: UIImage.init(for: self.iconType(for: prevState), iconSize: .large, color: self.iconColor(for: prevState)))
             fakeImageView.frame = imageView.frame
             
             imageView.superview!.addSubview(fakeImageView)
 
-            let image = UIImage.init(forIcon: self.iconTypeForState(.Selected), iconSize: .Large, color: self.iconColorForState(.Selected))
+            let image = UIImage.init(for: self.iconType(for: .selected), iconSize: .large, color: self.iconColor(for: .selected))
             let animationImageView = UIImageView(image: image)
             animationImageView.frame = imageView.frame
             imageView.superview!.addSubview(animationImageView)
@@ -47,10 +47,10 @@ public class LikeButton: IconButton {
             imageView.alpha = 0
             if selected { // gets like
                 animationImageView.alpha = 0.0
-                animationImageView.transform = CGAffineTransformMakeScale(6.3, 6.3)
+                animationImageView.transform = CGAffineTransform(scaleX: 6.3, y: 6.3)
                 
                 UIView.wr_animateWithEasing(RBBEasingFunctionEaseOutExpo, duration: 0.35, animations: {
-                    animationImageView.transform = CGAffineTransformIdentity
+                    animationImageView.transform = CGAffineTransform.identity
                 })
                 
                 UIView.wr_animateWithEasing(RBBEasingFunctionEaseOutQuart, duration: 0.35, animations: {
@@ -65,7 +65,7 @@ public class LikeButton: IconButton {
             else {
                 
                 UIView.wr_animateWithEasing(RBBEasingFunctionEaseInExpo, duration: 0.35, animations: {
-                    animationImageView.transform = CGAffineTransformMakeScale(6.3, 6.3)
+                    animationImageView.transform = CGAffineTransform(scaleX: 6.3, y: 6.3)
                 })
                 
                 UIView.wr_animateWithEasing(RBBEasingFunctionEaseInQuart, duration: 0.35, animations: {
@@ -79,7 +79,7 @@ public class LikeButton: IconButton {
             }
         }
         else {
-            self.selected = selected
+            self.isSelected = selected
         }
     }
 }

@@ -20,8 +20,8 @@
 import Foundation
 
 enum PresentationStyle: Int {
-    case Modal
-    case Navigation
+    case modal
+    case navigation
 }
 
 class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptorType, SettingsControllerGeneratorType {
@@ -36,23 +36,23 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     
     let presentationAction: () -> (UIViewController?)
     
-    init(title: String, presentationAction: () -> (UIViewController?)) {
+    init(title: String, presentationAction: @escaping () -> (UIViewController?)) {
         self.title = title
         self.destructive = false
-        self.presentationStyle = .Navigation
+        self.presentationStyle = .navigation
         self.presentationAction = presentationAction
-        self.identifier = .None
+        self.identifier = .none
     }
     
-    init(title: String, isDestructive: Bool, presentationStyle: PresentationStyle, presentationAction: () -> (UIViewController?)) {
+    init(title: String, isDestructive: Bool, presentationStyle: PresentationStyle, presentationAction: @escaping () -> (UIViewController?)) {
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle
         self.presentationAction = presentationAction
-        self.identifier = .None
+        self.identifier = .none
     }
     
-    init(title: String, isDestructive: Bool, presentationStyle: PresentationStyle, identifier: String, presentationAction: () -> (UIViewController?)) {
+    init(title: String, isDestructive: Bool, presentationStyle: PresentationStyle, identifier: String, presentationAction: @escaping () -> (UIViewController?)) {
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle
@@ -60,36 +60,36 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.identifier = identifier
     }
     
-    func select(value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue?) {
         guard let controllerToShow = self.generateViewController() else
         {
             return
         }
         
         switch self.presentationStyle {
-        case .Modal:
-            self.viewController?.presentViewController(controllerToShow, animated: true, completion: .None)
-        case .Navigation:
+        case .modal:
+            self.viewController?.present(controllerToShow, animated: true, completion: .none)
+        case .navigation:
             if let navigationController = self.viewController?.navigationController {
                 navigationController.pushViewController(controllerToShow, animated: true)
             }
         }
     }
     
-    func featureCell(cell: SettingsCellType) {
+    func featureCell(_ cell: SettingsCellType) {
         cell.titleText = self.title
         if self.destructive {
-            cell.titleColor = UIColor.redColor()
+            cell.titleColor = UIColor.red
         }
         else {
-            cell.titleColor = UIColor.darkTextColor()
+            cell.titleColor = UIColor.darkText
         }
         
         if let groupCell = cell as? SettingsGroupCell {
-            if self.presentationStyle == .Modal {
-                groupCell.accessoryType = .None
+            if self.presentationStyle == .modal {
+                groupCell.accessoryType = .none
             } else {
-                groupCell.accessoryType = .DisclosureIndicator
+                groupCell.accessoryType = .disclosureIndicator
             }
         }
     }

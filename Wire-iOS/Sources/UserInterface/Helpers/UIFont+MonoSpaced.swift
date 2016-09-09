@@ -31,8 +31,8 @@ private let monospaceAttribute = [
 extension UIFont {
     
     func monospacedFont() -> UIFont {
-        let descriptor = fontDescriptor()
-        let monospaceFontDescriptor = descriptor.fontDescriptorByAddingAttributes(monospaceAttribute)
+        let descriptor = fontDescriptor
+        let monospaceFontDescriptor = descriptor.addingAttributes(monospaceAttribute)
         return UIFont(descriptor: monospaceFontDescriptor, size: 0.0)
     }
     

@@ -35,8 +35,8 @@ public extension LocationData {
 
     static func locationData(fromDictionary dict: [String : AnyObject]) -> LocationData? {
         guard let latitude = dict[latitudeKey] as? Float,
-            longitude = dict[longitudeKey] as? Float,
-            zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
+            let longitude = dict[longitudeKey] as? Float,
+            let zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
         return .locationData(withLatitude: latitude, longitude: longitude, name: nil, zoomLevel: Int32(zoomLevel))
     }
     

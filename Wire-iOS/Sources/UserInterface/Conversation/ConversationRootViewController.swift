@@ -21,13 +21,13 @@ import UIKit
 import zmessaging
 import Cartography
 
-@objc public class ConversationRootViewController: UIViewController, UINavigationBarDelegate {
+@objc open class ConversationRootViewController: UIViewController, UINavigationBarDelegate {
     
-    private var navigationSeparator = UIView()
-    private var customNavBar = UINavigationBar()
-    private var contentView = UIView()
+    fileprivate var navigationSeparator = UIView()
+    fileprivate var customNavBar = UINavigationBar()
+    fileprivate var contentView = UIView()
     
-    public private(set) weak var conversationViewController: ConversationViewController?
+    open fileprivate(set) weak var conversationViewController: ConversationViewController?
     
     public init(conversation: ZMConversation, clientViewController: ZClientViewController) {
         let conversationController = ConversationViewController()
@@ -48,17 +48,17 @@ import Cartography
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure() {
+    open func configure() {
         guard let conversationViewController = self.conversationViewController else {
             return
         }
         
         self.navigationSeparator.translatesAutoresizingMaskIntoConstraints = false
         
-        self.customNavBar.translucent = false
-        self.customNavBar.opaque = true
+        self.customNavBar.isTranslucent = false
+        self.customNavBar.isOpaque = true
         self.customNavBar.delegate = self
-        self.customNavBar.setBackgroundImage(UIImage(), forBarPosition: .Any, barMetrics: .Default)
+        self.customNavBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         self.customNavBar.shadowImage = UIImage()
         self.customNavBar.translatesAutoresizingMaskIntoConstraints = false
         
@@ -89,23 +89,23 @@ import Cartography
         self.customNavBar.pushNavigationItem(conversationViewController.navigationItem, animated: false)
     }
     
-    override public func viewDidAppear(animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         delay(0.4) {
-            UIApplication.sharedApplication().wr_updateStatusBarForCurrentControllerAnimated(true)
+            UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
         }
     }
     
-    public override func prefersStatusBarHidden() -> Bool {
+    open override var prefersStatusBarHidden : Bool {
         return false
     }
     
-    public override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        switch ColorScheme.defaultColorScheme().variant {
-        case .Light:
-            return .Default
-        case .Dark:
-            return .LightContent
+    open override var preferredStatusBarStyle : UIStatusBarStyle {
+        switch ColorScheme.default().variant {
+        case .light:
+            return .default
+        case .dark:
+            return .lightContent
         }
     }
 }
@@ -114,11 +114,11 @@ public extension ConversationViewController {
     
     func barButtonItem(withType type: ZetaIconType, target: AnyObject?, action: Selector, accessibilityIdentifier: String?) -> UIBarButtonItem {
         let button = IconButton.iconButtonDefault()
-        button.setIcon(type, withSize: .Tiny, forState: .Normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -16)
-        button.frame = CGRect(x: 0, y: 0, width: 30, height: 20)
-        button.addTarget(target, action: action, forControlEvents: .TouchUpInside)
-        button.accessibilityIdentifier = accessibilityIdentifier
+        button?.setIcon(type, with: .tiny, for: .normal)
+        button?.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -16)
+        button?.frame = CGRect(x: 0, y: 0, width: 30, height: 20)
+        button?.addTarget(target, action: action, for: .touchUpInside)
+        button?.accessibilityIdentifier = accessibilityIdentifier
         return UIBarButtonItem(customView: button)
     }
     
@@ -139,13 +139,13 @@ public extension ConversationViewController {
         return [audioCallBarButtonItem]
     }
     
-    func voiceCallItemTapped(sender: UIBarButtonItem) {
+    func voiceCallItemTapped(_ sender: UIBarButtonItem) {
         ConversationInputBarViewController.endEditingMessage()
         conversation.startAudioCallWithCompletionHandler(nil)
         Analytics.shared()?.tagMediaAction(.AudioCall, inConversation: conversation)
     }
     
-    func videoCallItemTapped(sender: UIBarButtonItem) {
+    func videoCallItemTapped(_ sender: UIBarButtonItem) {
         ConversationInputBarViewController.endEditingMessage()
         conversation.startVideoCallWithCompletionHandler(nil)
         Analytics.shared()?.tagMediaAction(.VideoCall, inConversation: conversation)

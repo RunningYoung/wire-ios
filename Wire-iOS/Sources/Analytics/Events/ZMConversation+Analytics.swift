@@ -27,7 +27,7 @@ extension ConversationType {
         }
     }
     
-    static func type(conversation: ZMConversation) -> ConversationType? {
+    static func type(_ conversation: ZMConversation) -> ConversationType? {
         switch conversation.conversationType {
         case .OneOnOne:
             return .OneToOne
@@ -51,7 +51,7 @@ extension ZMConversation {
     
     public var isBotConversation : Bool {
         guard conversationType == .OneOnOne,
-              let otherUser = firstActiveParticipantOtherThanSelf() where otherUser.isBot
+              let otherUser = firstActiveParticipantOtherThanSelf() , otherUser.isBot
         else { return false }
         
         return true

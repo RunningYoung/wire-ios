@@ -77,8 +77,8 @@ extension SettingsSectionDescriptorType {
 }
 
 enum InternalScreenStyle {
-    case Plain
-    case Grouped
+    case plain
+    case grouped
 }
 
 protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorType {
@@ -131,7 +131,7 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     var header: String?
     var footer: String?
     
-    init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .None, footer: String? = .None, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .None) {
+    init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
         self.cellDescriptors = cellDescriptors
         self.header = header
         self.footer = footer
@@ -160,7 +160,7 @@ class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, Sett
     
     weak var viewController: UIViewController?
     
-    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .Grouped, identifier: String? = .None, previewGenerator: PreviewGeneratorType? = .None) {
+    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .grouped, identifier: String? = .none, previewGenerator: PreviewGeneratorType? = .none) {
         self.items = items
         self.title = title
         self.style = style
@@ -168,7 +168,7 @@ class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, Sett
         self.previewGenerator = previewGenerator
     }
     
-    func featureCell(cell: SettingsCellType) {
+    func featureCell(_ cell: SettingsCellType) {
         cell.titleText = self.title
         if let previewGenerator = self.previewGenerator,
             let preview = previewGenerator(self) {
@@ -176,7 +176,7 @@ class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, Sett
         }
     }
     
-    func select(value: SettingsPropertyValue?) {
+    func select(_ value: SettingsPropertyValue?) {
         if let navigationController = self.viewController?.navigationController,
            let controllerToPush = self.generateViewController() {
             navigationController.pushViewController(controllerToPush, animated: true)
@@ -190,7 +190,7 @@ class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, Sett
 
 // MARK: - Helpers
 
-func SettingsPropertyLabelText(name: SettingsPropertyName) -> String {
+func SettingsPropertyLabelText(_ name: SettingsPropertyName) -> String {
     switch (name) {
     case .ChatHeadsDisabled:
         return NSLocalizedString("self.settings.notifications.chat_alerts.toggle", comment: "")

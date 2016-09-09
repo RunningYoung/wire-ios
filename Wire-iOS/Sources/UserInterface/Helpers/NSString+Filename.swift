@@ -21,14 +21,14 @@ import Foundation
 
 extension NSString {
     
-    private static let dateFormatter : NSDateFormatter = {
-        let formatter = NSDateFormatter()
+    fileprivate static let dateFormatter : DateFormatter = {
+        let formatter = DateFormatter()
         formatter.dateFormat = "yyyy MM dd hh.mm.ss"
         return formatter
     }()
     
     static func filenameForSelfUser() -> NSString {
-        let filename = "\(ZMUser.selfUser().name) \(dateFormatter.stringFromDate(NSDate()))"
+        let filename = "\(ZMUser.selfUser().name) \(dateFormatter.stringFromDate(Date()))"
         return filename.stringByReplacingOccurrencesOfString(" ", withString: "-")
     }
 }

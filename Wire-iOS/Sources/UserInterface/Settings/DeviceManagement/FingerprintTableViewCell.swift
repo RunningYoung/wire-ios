@@ -36,21 +36,21 @@ class FingerprintTableViewCell: UITableViewCell {
         }
     }
     
-    var fingerprint: NSData? {
+    var fingerprint: Data? {
         didSet {
             self.updateFingerprint()
         }
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        self.titleLabel = UILabel(frame: CGRectZero)
+        self.titleLabel = UILabel(frame: CGRect.zero)
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
         self.titleLabel.text = NSLocalizedString("self.settings.account_details.key_fingerprint.title", comment: "")
-        self.fingerprintLabel = UILabel(frame: CGRectZero)
+        self.fingerprintLabel = UILabel(frame: CGRect.zero)
         self.fingerprintLabel.translatesAutoresizingMaskIntoConstraints = false
         self.fingerprintLabel.numberOfLines = 0
         
-        self.spinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        self.spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         self.spinner.translatesAutoresizingMaskIntoConstraints = false
         self.spinner.hidesWhenStopped = true
         
@@ -75,7 +75,7 @@ class FingerprintTableViewCell: UITableViewCell {
             spinner.bottom <= contentView.bottom - 16
         }
         
-        CASStyler.defaultStyler().styleItem(self)
+        CASStyler.default().styleItem(self)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -95,7 +95,7 @@ class FingerprintTableViewCell: UITableViewCell {
                     self.spinner.stopAnimating()
         }
         else {
-            self.fingerprintLabel.attributedText = .None
+            self.fingerprintLabel.attributedText = .none
             self.spinner.startAnimating()
         }
         self.layoutIfNeeded()

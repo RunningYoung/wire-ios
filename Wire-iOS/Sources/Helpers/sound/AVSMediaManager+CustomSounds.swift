@@ -20,8 +20,8 @@
 import Foundation
 
 extension AVSMediaManager {
-    private func settingsPropertyFactory() -> SettingsPropertyFactory {
-        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: NSUserDefaults.standardUserDefaults(),
+    fileprivate func settingsPropertyFactory() -> SettingsPropertyFactory {
+        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: UserDefaults.standardUserDefaults(),
                                                               analytics: Analytics.shared(),
                                                               mediaManager: AVSProvider.shared.mediaManager,
                                                               userSession: ZMUserSession.sharedSession(),
@@ -30,9 +30,9 @@ extension AVSMediaManager {
     }
     
     func observeSoundConfigurationChanges() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.MessageSoundName.changeNotificationName, object: .None)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.CallSoundName.changeNotificationName, object: .None)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.PingSoundName.changeNotificationName, object: .None)
+        NotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.MessageSoundName.changeNotificationName, object: .None)
+        NotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.CallSoundName.changeNotificationName, object: .None)
+        NotificationCenter.defaultCenter().addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: SettingsPropertyName.PingSoundName.changeNotificationName, object: .None)
     }
     
     func configureCustomSounds() {
@@ -48,7 +48,7 @@ extension AVSMediaManager {
         self.updateCustomSoundForProperty(pingSoundProperty)
     }
     
-    func updateCustomSoundForProperty(property: SettingsProperty) {
+    func updateCustomSoundForProperty(_ property: SettingsProperty) {
         let name = property.propertyName.rawValue
         let value = property.propertyValue.value()
         if let stringValue = value as? String {
@@ -56,7 +56,7 @@ extension AVSMediaManager {
         }
     }
     
-    @objc func updateCustomSoundForName(propertyName: String, propertyValue: String?) {
+    @objc func updateCustomSoundForName(_ propertyName: String, propertyValue: String?) {
         let value = propertyValue
         
         let soundValue = value == .None ? .None : ZMSound(rawValue: value!)
@@ -80,7 +80,7 @@ extension AVSMediaManager {
     }
     
     // MARK: - Notifications
-    func didUpdateSound(notification: NSNotification?) {
+    func didUpdateSound(_ notification: NSNotification?) {
         self.configureSounds()
     }
 }

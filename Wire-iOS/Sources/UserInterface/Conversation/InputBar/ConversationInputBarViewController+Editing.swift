@@ -31,12 +31,12 @@ extension ConversationInputBarViewController {
         inputBar.inputBarState = .Writing
     }
     
-    func editMessage(message: ZMConversationMessage) {
+    func editMessage(_ message: ZMConversationMessage) {
         guard let text = message.textMessageData?.messageText else { return }
         mode = .TextInput
         editingMessage = message
         inputBar.inputBarState = .Editing(originalText: text)
-        NSNotificationCenter.defaultCenter().addObserver(
+        NotificationCenter.defaultCenter().addObserver(
             self,
             selector: #selector(endEditingMessageIfNeeded),
             name: endEditingNotificationName,
@@ -52,7 +52,7 @@ extension ConversationInputBarViewController {
             self.conversation.draftMessageText = ""
         }
         inputBar.inputBarState = .Writing
-        NSNotificationCenter.defaultCenter().removeObserver(
+        NotificationCenter.defaultCenter().removeObserver(
             self,
             name: endEditingNotificationName,
             object: nil
@@ -60,7 +60,7 @@ extension ConversationInputBarViewController {
     }
     
     static func endEditingMessage() {
-        NSNotificationCenter.defaultCenter().postNotificationName(endEditingNotificationName, object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: endEditingNotificationName), object: nil)
     }
 
 }
@@ -68,7 +68,7 @@ extension ConversationInputBarViewController {
 
 extension ConversationInputBarViewController: InputBarEditViewDelegate {
 
-    public func inputBarEditView(editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType) {
+    public func inputBarEditView(_ editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType) {
         switch buttonType {
         case .Undo: inputBar.undo()
         case .Cancel: endEditingMessageIfNeeded()
@@ -76,7 +76,7 @@ extension ConversationInputBarViewController: InputBarEditViewDelegate {
         }
     }
     
-    public func inputBarEditViewDidLongPressUndoButton(editView: InputBarEditView) {
+    public func inputBarEditViewDidLongPressUndoButton(_ editView: InputBarEditView) {
         guard let text = editingMessage?.textMessageData?.messageText else { return }
         inputBar.setInputBarText(text)
     }

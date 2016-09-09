@@ -27,7 +27,7 @@ import Foundation
         self.settingsPropertyFactory = settingsPropertyFactory
     }
     
-    func rootSettingsGroup() -> protocol<SettingsControllerGeneratorType, SettingsInternalGroupCellDescriptorType> {
+    func rootSettingsGroup() -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [self.accountGroup(), self.privacyAndSecurityGroup(), self.alertsGroup(), self.advancedGroup()]
         
         if DeveloperMenuState.developerMenuEnabled() {
@@ -36,7 +36,7 @@ import Foundation
         
         let topSection = SettingsSectionDescriptor(cellDescriptors: topLevelElements)
 
-        return SettingsGroupCellDescriptor(items: [topSection], title: "self.settings".localized, style: .Plain)
+        return SettingsGroupCellDescriptor(items: [topSection], title: "self.settings".localized, style: .plain)
     }
     
     func accountGroup() -> SettingsCellDescriptorType {
@@ -52,7 +52,7 @@ import Foundation
         
         let resetPasswordTitle = "self.settings.password_reset_menu.title".localized
         let resetPassword = SettingsButtonCellDescriptor(title: resetPasswordTitle, isDestructive: false) { (cellDescriptor: SettingsCellDescriptorType) -> () in
-            UIApplication.sharedApplication().openURL(NSURL.wr_passwordResetURL().wr_URLByAppendingLocaleParameter())
+            UIApplication.shared.openURL(URL.wr_passwordResetURL().wr_URLByAppendingLocaleParameter())
             Analytics.shared()?.tagResetPassword(true, fromType: ResetFromProfile)
         }
         
@@ -61,11 +61,11 @@ import Foundation
         let signOutButton = SettingsButtonCellDescriptor(title: "Sign out", isDestructive: false) { (cellDescriptor: SettingsCellDescriptorType) -> () in
             // sign out is not supported yet
         }
-        let signOutSection = SettingsSectionDescriptor(cellDescriptors: [signOutButton], header: .None, footer: .None) { (_) -> (Bool) in return false }
+        let signOutSection = SettingsSectionDescriptor(cellDescriptors: [signOutButton], header: .none, footer: .none) { (_) -> (Bool) in return false }
 
-        let deleteAccountButton = SettingsExternalScreenCellDescriptor(title: "self.settings.account_details.delete_account.title".localized, isDestructive: true, presentationStyle: .Modal) { () -> (UIViewController?) in
-            let alert = UIAlertController(title: "self.settings.account_details.delete_account.alert.title".localized, message: "self.settings.account_details.delete_account.alert.message".localized, preferredStyle: .Alert)
-            let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .Cancel, handler: { (alertAction: UIAlertAction) -> Void in
+        let deleteAccountButton = SettingsExternalScreenCellDescriptor(title: "self.settings.account_details.delete_account.title".localized, isDestructive: true, presentationStyle: .modal) { () -> (UIViewController?) in
+            let alert = UIAlertController(title: "self.settings.account_details.delete_account.alert.title".localized, message: "self.settings.account_details.delete_account.alert.message".localized, preferredStyle: .alert)
+            let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: { (alertAction: UIAlertAction) -> Void in
                 
             })
             alert.addAction(actionCancel)
@@ -80,7 +80,7 @@ import Foundation
         }
         
         let deleteSubtitle = "self.settings.account_details.delete_account.footer".localized
-        let deleteSection = SettingsSectionDescriptor(cellDescriptors: [deleteAccountButton], header: .None, footer: deleteSubtitle)
+        let deleteSection = SettingsSectionDescriptor(cellDescriptors: [deleteAccountButton], header: .none, footer: deleteSubtitle)
 
         return SettingsGroupCellDescriptor(items: [nameSection, detailsSection, resetPasswordSection, signOutSection, deleteSection], title: "self.settings.account_section".localized)
     }
@@ -88,7 +88,7 @@ import Foundation
     func privacyAndSecurityGroup() -> SettingsCellDescriptorType {
         let shareButtonTitleDisabled = "self.settings.privacy_contacts_menu.settings_button.title".localized
         let shareContactsDisabledSettingsButton = SettingsButtonCellDescriptor(title: shareButtonTitleDisabled, isDestructive: false, selectAction: { (descriptor: SettingsCellDescriptorType) -> () in
-                UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+                UIApplication.shared.openURL(URL(string:UIApplicationOpenSettingsURLString)!)
             }) { (descriptor: SettingsCellDescriptorType) -> (Bool) in
                 if AddressBookHelper.sharedHelper.addressBookSearchPerformedAtLeastOnce {
                     if AddressBookHelper.sharedHelper.isAddressBookAccessDisabled || AddressBookHelper.sharedHelper.isAddressBookAccessUnknown {
@@ -110,10 +110,10 @@ import Foundation
         }
 
         let devicesSectionTitle = "self.settings.privacy_analytics_menu.devices.title".localized
-        let devicesSection = SettingsSectionDescriptor(cellDescriptors: [self.devicesGroup()], header: devicesSectionTitle, footer: .None)
+        let devicesSection = SettingsSectionDescriptor(cellDescriptors: [self.devicesGroup()], header: devicesSectionTitle, footer: .none)
 
         let reportButton = SettingsButtonCellDescriptor(title: "self.report_abuse".localized, isDestructive: false) { (cellDescriptor: SettingsCellDescriptorType) -> () in
-            UIApplication.sharedApplication().openURL(NSURL.wr_reportAbuseURL().wr_URLByAppendingLocaleParameter())
+            UIApplication.shared.openURL(URL.wr_reportAbuseURL().wr_URLByAppendingLocaleParameter())
         }
         
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
@@ -123,7 +123,7 @@ import Foundation
         }
         let subtitleText = "self.settings.privacy.clear_history.subtitle".localized
         
-        let clearHistorySection = SettingsSectionDescriptor(cellDescriptors: [clearHistoryButton], header: .None, footer: subtitleText)  { (_) -> (Bool) in return false }
+        let clearHistorySection = SettingsSectionDescriptor(cellDescriptors: [clearHistoryButton], header: .none, footer: subtitleText)  { (_) -> (Bool) in return false }
         
         return SettingsGroupCellDescriptor(items: [shareContactsDisabledSection, devicesSection, reportSection, clearHistorySection], title: "self.settings.privacy_menu.title".localized)
     }
@@ -131,10 +131,10 @@ import Foundation
     func devicesGroup() -> SettingsCellDescriptorType {
         return SettingsExternalScreenCellDescriptor(title: "self.settings.privacy_analytics_menu.devices_button.title".localized,
             isDestructive: false,
-            presentationStyle: PresentationStyle.Navigation,
-            identifier: self.dynamicType.settingsDevicesCellIdentifier) { () -> (UIViewController?) in
+            presentationStyle: PresentationStyle.navigation,
+            identifier: type(of: self).settingsDevicesCellIdentifier) { () -> (UIViewController?) in
                 Analytics.shared()?.tagSelfDeviceList()
-                return ClientListViewController(clientsList: .None, credentials: .None, detailedView: true)
+                return ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
         }
     }
     
@@ -206,7 +206,7 @@ import Foundation
         return SettingsGroupCellDescriptor(items: [notificationVisibleSection, chatHeadsSection, soundAlertSection, soundsSection], title: "self.settings.sound_menu.group.title".localized)
     }
     
-    func soundGroupForSetting(settingsProperty: SettingsProperty, title: String, callSound: Bool, fallbackSoundName: String, defaultSoundTitle : String = "self.settings.sound_menu.sounds.wire_sound".localized) -> SettingsCellDescriptorType {
+    func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, callSound: Bool, fallbackSoundName: String, defaultSoundTitle : String = "self.settings.sound_menu.sounds.wire_sound".localized) -> SettingsCellDescriptorType {
         var items: [ZMSound?] = [.None]
         if callSound {
             items.appendContentsOf(ZMSound.ringtones.map { $0 as ZMSound? } )
@@ -247,7 +247,7 @@ import Foundation
             }
         }
         
-        return SettingsGroupCellDescriptor(items: [section], title: title, identifier: .None, previewGenerator: previewGenerator)
+        return SettingsGroupCellDescriptor(items: [section], title: title, identifier: .none, previewGenerator: previewGenerator)
     }
     
     func minionsGroup() -> SettingsCellDescriptorType {
@@ -272,19 +272,19 @@ import Foundation
         let pushTitle = "self.settings.advanced.reset_push_token.title".localized
         let pushSectionSubtitle = "self.settings.advanced.reset_push_token.subtitle".localized
         
-        let pushButton = SettingsExternalScreenCellDescriptor(title: pushTitle, isDestructive: false, presentationStyle: PresentationStyle.Modal) { () -> (UIViewController?) in
+        let pushButton = SettingsExternalScreenCellDescriptor(title: pushTitle, isDestructive: false, presentationStyle: PresentationStyle.modal) { () -> (UIViewController?) in
             ZMUserSession.sharedSession().resetPushTokens()
-            let alert = UIAlertController(title: "self.settings.advanced.reset_push_token_alert.title".localized, message: "self.settings.advanced.reset_push_token_alert.message".localized, preferredStyle: .Alert)
+            let alert = UIAlertController(title: "self.settings.advanced.reset_push_token_alert.title".localized, message: "self.settings.advanced.reset_push_token_alert.message".localized, preferredStyle: .alert)
             weak var weakAlert = alert;
-            alert.addAction(UIAlertAction(title: "general.ok".localized, style: .Default, handler: { (alertAction: UIAlertAction) -> Void in
+            alert.addAction(UIAlertAction(title: "general.ok".localized, style: .default, handler: { (alertAction: UIAlertAction) -> Void in
                 if let alert = weakAlert {
-                    alert.dismissViewControllerAnimated(true, completion: nil)
+                    alert.dismiss(animated: true, completion: nil)
                 }
             }));
             return alert
         }
         
-        let pushSection = SettingsSectionDescriptor(cellDescriptors: [pushButton], header: .None, footer: pushSectionSubtitle)  { (_) -> (Bool) in
+        let pushSection = SettingsSectionDescriptor(cellDescriptors: [pushButton], header: .none, footer: pushSectionSubtitle)  { (_) -> (Bool) in
             return true
         }
         
@@ -310,7 +310,7 @@ import Foundation
         let title = "self.settings.apns_logging.title".localized
         
         return SettingsExternalScreenCellDescriptor(title: title) { () -> (UIViewController?) in
-            let storyboard = UIStoryboard(name: "DeveloperAPNS", bundle:NSBundle(forClass: self.dynamicType))
+            let storyboard = UIStoryboard(name: "DeveloperAPNS", bundle:Bundle(for: type(of: self)))
             return storyboard.instantiateInitialViewController()
         }
     }

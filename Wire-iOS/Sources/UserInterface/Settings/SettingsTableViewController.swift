@@ -42,25 +42,25 @@ class SettingsTableViewController: UIViewController, UITableViewDelegate, UITabl
         fatalError()
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError()
     }
     
     override func viewDidLoad() {
         self.createTableView()
         self.createConstraints()
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: #selector(SettingsTableViewController.dismissRootNavigation(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(SettingsTableViewController.dismissRootNavigation(_:)))
         super.viewDidLoad()
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         self.tableView?.reloadData()
     }
     
     func createTableView() {
-        let tableView = UITableView(frame: self.view.bounds, style: self.group.style == .Plain ? .Plain : .Grouped)
+        let tableView = UITableView(frame: self.view.bounds, style: self.group.style == .plain ? .plain : .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -68,7 +68,7 @@ class SettingsTableViewController: UIViewController, UITableViewDelegate, UITabl
         let allCellTypes: [SettingsTableCell.Type] = [SettingsGroupCell.self, SettingsButtonCell.self, SettingsToggleCell.self, SettingsValueCell.self, SettingsTextCell.self]
         
         for aClass in allCellTypes {
-            tableView.registerClass(aClass, forCellReuseIdentifier: aClass.reuseIdentifier)
+            tableView.register(aClass, forCellReuseIdentifier: aClass.reuseIdentifier)
         }
         self.tableView = tableView
         self.view.addSubview(tableView)
@@ -82,26 +82,26 @@ class SettingsTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     
-    func dismissRootNavigation(sender: AnyObject) {
-        self.navigationController?.presentingViewController?.dismissViewControllerAnimated(true, completion: .None)
+    func dismissRootNavigation(_ sender: AnyObject) {
+        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: .none)
     }
     
     // MARK: - UITableViewDelegate & UITableViewDelegate
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return self.group.visibleItems.count
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionDescriptor = self.group.visibleItems[section]
         return sectionDescriptor.visibleCellDescriptors.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let sectionDescriptor = self.group.visibleItems[indexPath.section]
-        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[indexPath.row]
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let sectionDescriptor = self.group.visibleItems[(indexPath as NSIndexPath).section]
+        let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
         
-        if let cell = tableView.dequeueReusableCellWithIdentifier(cellDescriptor.dynamicType.cellType.reuseIdentifier, forIndexPath: indexPath) as? SettingsTableCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier, for: indexPath) as? SettingsTableCell {
             cell.descriptor = cellDescriptor
             cellDescriptor.featureCell(cell)
             return cell
@@ -109,24 +109,24 @@ class SettingsTableViewController: UIViewController, UITableViewDelegate, UITabl
         fatalError("Cannot dequeue cell for index path \(indexPath) and cellDescriptor \(cellDescriptor)")
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let sectionDescriptor = self.group.visibleItems[indexPath.section]
-        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let sectionDescriptor = self.group.visibleItems[(indexPath as NSIndexPath).section]
+        let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
         
-        property.select(.None)
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        property.select(.none)
+        tableView.deselectRow(at: indexPath, animated: false)
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 44
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let sectionDescriptor = self.group.visibleItems[section]
         return sectionDescriptor.header
     }
     
-    func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         let sectionDescriptor = self.group.visibleItems[section]
         return sectionDescriptor.footer
     }

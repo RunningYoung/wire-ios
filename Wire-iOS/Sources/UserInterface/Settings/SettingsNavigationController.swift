@@ -20,10 +20,10 @@
 import Foundation
 
 @objc class SettingsNavigationController: UINavigationController {
-    let rootGroup: protocol<SettingsControllerGeneratorType, SettingsInternalGroupCellDescriptorType>
+    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
     let settingsPropertyFactory: SettingsPropertyFactory
     static func settingsNavigationController() -> SettingsNavigationController {
-        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: NSUserDefaults.standardUserDefaults(),
+        let settingsPropertyFactory = SettingsPropertyFactory(userDefaults: UserDefaults.standardUserDefaults(),
             analytics: Analytics.shared(),
             mediaManager: AVSProvider.shared.mediaManager,
             userSession: ZMUserSession.sharedSession(),
@@ -35,25 +35,25 @@ import Foundation
         return settingsNavigationController
     }
     
-    required init(rootGroup: protocol<SettingsControllerGeneratorType, SettingsInternalGroupCellDescriptorType>, settingsPropertyFactory: SettingsPropertyFactory) {
+    required init(rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType, settingsPropertyFactory: SettingsPropertyFactory) {
         self.rootGroup = rootGroup
         self.settingsPropertyFactory = settingsPropertyFactory
         super.init(nibName: nil, bundle: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SettingsNavigationController.soundIntensityChanged(_:)), name: SettingsPropertyName.SoundAlerts.changeNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SettingsNavigationController.soundIntensityChanged(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.SoundAlerts.changeNotificationName), object: nil)
     }
     
-    func openControllerForCellWithIdentifier(identifier: String) -> UIViewController? {
-        var resultViewController: UIViewController? = .None
+    func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
+        var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
         self.rootGroup.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) -> () in
-            if let topCellGroupDescriptor = topCellDescriptor as? protocol<SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType> {
+            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
                 topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) -> () in
                     if let cellIdentifier = cellDescriptor.identifier,
                         let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
                         let topViewController = topCellGroupDescriptor.generateViewController(),
                         let viewController = cellGroupDescriptor.generateViewController()
-                        where cellIdentifier == identifier
+                        , cellIdentifier == identifier
                     {
                         self.pushViewController(topViewController, animated: false)
                         self.pushViewController(viewController, animated: false)
@@ -69,15 +69,15 @@ import Foundation
         fatalError()
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError()
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func soundIntensityChanged(notification: NSNotification) {
+    func soundIntensityChanged(_ notification: Notification) {
         let soundProperty = self.settingsPropertyFactory.property(.SoundAlerts)
         
         if let intensivityLevel = soundProperty.propertyValue.value() as? AVSIntensityLevel {
@@ -102,7 +102,7 @@ import Foundation
         }
     }
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return [.Portrait]
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return [.portrait]
     }
 }
